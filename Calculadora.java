@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -6,9 +7,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
 import javax.swing.JOptionPane;
 
-
+/**
+ * Clase Calculadora que implementa una calculadora básica con interfaz gráfica.
+ * <p>
+ * La aplicación permite realizar operaciones matemáticas básicas como:
+ * suma, resta, multiplicación y división mediante una interfaz gráfica
+ * creada con la librería SWT.
+ * <p>
+ * El programa gestiona la introducción de números, la ejecución de
+ * operaciones y la visualización del resultado en pantalla.
+ *
+ * @author Juan Cruz García
+ * @version 0.1
+ * @since 2026
+ */
 public class Calculadora {
 
     // Constantes
@@ -26,15 +41,31 @@ public class Calculadora {
 
     private static Text texto_resultado;
 
+    /**
+     * Constructor de la clase Calculadora.
+     * <p>
+     * Inicializa las variables necesarias para el funcionamiento de la calculadora
+     * y, si se indica, dibuja la interfaz gráfica.
+     *
+     * @param gui indica si se debe mostrar la interfaz gráfica de la calculadora
+     */
     public Calculadora(boolean gui) {
 
         //Inicialización de las variables.
         inicializa();
 
-        if (gui==true) dibujaCalculadora();
+        if (gui == true) dibujaCalculadora();
 
     }
 
+    /**
+     * Crea y muestra la interfaz gráfica de la calculadora utilizando
+     * la librería SWT.
+     * <p>
+     * Este método construye todos los componentes gráficos:
+     * botones numéricos, botones de operaciones y el campo de texto
+     * donde se muestran los resultados.
+     */
     private void dibujaCalculadora() {
 
         Display display = Display.getDefault();
@@ -229,6 +260,12 @@ public class Calculadora {
         }
     }
 
+    /**
+     * Inicializa las variables internas de la calculadora.
+     * <p>
+     * Reinicia los valores de los operandos y establece el modo
+     * inicial de entrada de datos.
+     */
     public void inicializa() {
         operacion = "null";
         valor1 = 0;
@@ -237,30 +274,55 @@ public class Calculadora {
         inicializa_resultado = true;
     }
 
-    public String getResultadoString (){
+    /**
+     * Obtiene el resultado actual mostrado en la calculadora
+     * en formato de texto.
+     *
+     * @return cadena de texto que representa el resultado actual
+     */
+    public String getResultadoString() {
         return texto_resultado.getText();
     }
 
-    public void setResultadoString(String s){
+    /**
+     * Establece el valor que se mostrará en la pantalla de la calculadora.
+     *
+     * @param s cadena de texto que se mostrará como resultado
+     */
+    public void setResultadoString(String s) {
         texto_resultado.setText(s);
     }
 
+    /**
+     * Obtiene el resultado actual de la calculadora como número entero.
+     *
+     * @return valor entero del resultado mostrado en pantalla
+     */
     public int getResultadoInt() {
         String resultado = texto_resultado.getText();
         return Integer.parseInt(resultado);
     }
 
-    public void anadeNuevoDigito(int digito){
+    /**
+     * Añade un nuevo dígito al número que se está introduciendo
+     * en la calculadora.
+     * <p>
+     * Controla también que no se supere el número máximo de dígitos
+     * permitidos y elimina ceros iniciales innecesarios.
+     *
+     * @param digito número que se desea añadir al resultado actual
+     */
+    public void anadeNuevoDigito(int digito) {
         if (inicializa_resultado)
             setResultadoString("");
 
         String inputString = getResultadoString();
 
-        if (inputString.indexOf("0") == 0){
+        if (inputString.indexOf("0") == 0) {
             inputString = inputString.substring(1);
         }
 
-        if ((!inputString.equals("0") || digito > 0) && inputString.length() < MAX_DIGITS){
+        if ((!inputString.equals("0") || digito > 0) && inputString.length() < MAX_DIGITS) {
             setResultadoString(inputString + digito);
         }
 
@@ -268,18 +330,22 @@ public class Calculadora {
         inicializa_resultado = false;
     }
 
+    /**
+     * Ejecuta una operación matemática seleccionada por el usuario.
+     * <p>
+     * Guarda el primer operando y la operación seleccionada para
+     * poder realizar el cálculo cuando se introduzca el segundo operando.
+     *
+     * @param new_operacion operación matemática a realizar
+     */
     public void ejecutarOperador(String new_operacion) {
 
         int resultado;
 
-        if (operacion.equals("null"))
-        {
+        if (operacion.equals("null")) {
             resultado = getResultadoInt();
             valor1 = resultado;
-        }
-
-        else
-        {
+        } else {
             valor2 = getResultadoInt();
             resultado = ejecutarOperacion();
             muestraResultado(resultado);
@@ -290,7 +356,13 @@ public class Calculadora {
         operacion = new_operacion;
     }
 
-    public void ejecutarIgual(){
+    /**
+     * Ejecuta la operación matemática pendiente utilizando
+     * los operandos introducidos por el usuario.
+     * <p>
+     * El resultado se muestra en la pantalla de la calculadora.
+     */
+    public void ejecutarIgual() {
         int resultado = 0;
 
         valor2 = getResultadoInt();
@@ -300,21 +372,26 @@ public class Calculadora {
         operacion = "null";
     }
 
+    /**
+     * Realiza la operación matemática seleccionada entre los operandos
+     * almacenados en la calculadora.
+     * <p>
+     * También controla errores como la división entre cero.
+     *
+     * @return resultado de la operación realizada
+     */
     public int ejecutarOperacion() {
         int resultado = 0;
 
-        if (operacion.equals("/"))
-        {
+        if (operacion.equals("/")) {
 
-            if (valor2 == 0)
-            {
+            if (valor2 == 0) {
                 JOptionPane.showMessageDialog(null, "No se puede dividir por cero", "Error", JOptionPane.ERROR_MESSAGE);
                 operacion = "null";
                 valor1 = 0;
                 modo = MODE_ENTRADA;
                 inicializa_resultado = true;
-            }
-            else
+            } else
                 resultado = valor1 / valor2;
         }
 
@@ -330,13 +407,27 @@ public class Calculadora {
         return resultado;
     }
 
-    public void muestraResultado(int resultado){
+    /**
+     * Muestra el resultado de una operación en la pantalla
+     * de la calculadora.
+     *
+     * @param resultado valor que se mostrará como resultado
+     */
+    public void muestraResultado(int resultado) {
         setResultadoString(Integer.toString(resultado));
         valor1 = resultado;
         modo = MODE_RESULTADO;
         inicializa_resultado = true;
     }
 
+    /**
+     * Método principal de la aplicación.
+     * <p>
+     * Inicia la calculadora creando una instancia de la clase
+     * con la interfaz gráfica activada.
+     *
+     * @param args argumentos de la línea de comandos
+     */
     public static void main(String args[]) {
         Calculadora calculadora = new Calculadora(true);
     }
